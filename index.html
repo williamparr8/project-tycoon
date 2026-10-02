@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}html{color-scheme:light}body{margin:0}img{max-width:100%}</style>
+<title>Esquisses Project Tycoon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Concept : deux écrans du même jeu côte à côte. A = poste de pilotage sobre (tableau de bord). B = tour de bureaux en coupe, personnages vivants, courrier à décisions, route du projet. */
+:root{
+  --bg:#eef1f6; --surface:#ffffff; --surface2:#f5f7fb; --ink:#14202e; --ink2:#566379; --line:#dce2ec;
+  --accent:#0e7c86; --accent-ink:#ffffff; --accent-soft:#dcf1f2;
+  --good:#1b7f4d; --good-soft:#dcf4e6; --warn:#a85f00; --warn-soft:#fcefd0; --bad:#c23b3b; --bad-soft:#fbe2e2; --plan:#a9b4c7;
+  --sky1:#9fdcf0; --sky2:#e6f6fb; --wall:#fffaf0; --wall2:#e9f7ef; --wall3:#eef0ff; --wall4:#fff0e6; --dalle:#5b6b86; --bois:#b9824f; --glass:#cfeaf5; --sun:#ffc83d; --coral:#ff6b5e; --mint:#38c28a; --nuit:#1e2a44; --cadre:#14202e;
+  --f-d:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif; --f-b:'Figtree','Segoe UI',system-ui,sans-serif;
+  --f-j:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif; --f-jb:'Nunito','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c131d; --surface:#141d2b; --surface2:#1a2536; --ink:#e7edf5; --ink2:#9fb0c7; --line:#293851;
+  --accent:#3dc2cb; --accent-ink:#04262a; --accent-soft:#12383c;
+  --good:#4bc98b; --good-soft:#12362a; --warn:#f0b24a; --warn-soft:#3a2c0e; --bad:#f27c7c; --bad-soft:#3d1c1c; --plan:#4b5c78;
+  --sky1:#1a2747; --sky2:#2b3a63; --wall:#2a3552; --wall2:#223a3f; --wall3:#2b2f56; --wall4:#3a3040; --dalle:#8fa0bd; --bois:#8a5f3a; --glass:#ffd98a; --nuit:#0e1526; --cadre:#e7edf5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c131d; --surface:#141d2b; --surface2:#1a2536; --ink:#e7edf5; --ink2:#9fb0c7; --line:#293851;
+  --accent:#3dc2cb; --accent-ink:#04262a; --accent-soft:#12383c;
+  --good:#4bc98b; --good-soft:#12362a; --warn:#f0b24a; --warn-soft:#3a2c0e; --bad:#f27c7c; --bad-soft:#3d1c1c; --plan:#4b5c78;
+  --sky1:#1a2747; --sky2:#2b3a63; --wall:#2a3552; --wall2:#223a3f; --wall3:#2b2f56; --wall4:#3a3040; --dalle:#8fa0bd; --bois:#8a5f3a; --glass:#ffd98a; --nuit:#0e1526; --cadre:#e7edf5; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-b)}
+h1,h2,h3{font-family:var(--f-d);margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.page{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;gap:36px}
+.intro h1{font-size:clamp(1.8rem,5vw,2.6rem);letter-spacing:-.02em}
+.intro p{color:var(--ink2);max-width:62ch;margin-top:8px}
+.etiq{display:inline-flex;gap:8px;align-items:center;font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.legende-esq{display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between;align-items:end;margin-bottom:12px}
+.legende-esq h2{font-size:1.4rem}
+.legende-esq p{color:var(--ink2);max-width:60ch;font-size:.92rem}
+.cadre{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
+.num{font-variant-numeric:tabular-nums}
+.choix-style{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.choix-style .lib{font-size:.8rem;font-weight:700;color:var(--ink2);margin-right:6px}
+.choix-style button{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:7px 16px;font-weight:700;font-size:.9rem}
+.choix-style button:hover{border-color:var(--accent)}
+.choix-style button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin-top:14px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.88rem;min-width:0}
+.note b{display:block;margin-bottom:2px;font-family:var(--f-d)}
+.note span{color:var(--ink2)}
+
+/* ===== A : sérieuse ===== */
+.A{display:grid;grid-template-columns:200px minmax(0,1fr) 270px;min-height:560px;font-size:.84rem}
+.A .barre{grid-column:1/-1;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line)}
+.A .logo{width:28px;height:28px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 .8rem var(--f-d)}
+.A .chemin{color:var(--ink2)} .A .chemin b{color:var(--ink)}
+.A .recherche{margin-left:auto;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:5px 10px;color:var(--ink2);min-width:150px}
+.A .moi{display:flex;gap:8px;align-items:center}
+.A .pastille{width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:.72rem}
+.A aside{background:var(--surface);border-right:1px solid var(--line);padding:12px 10px;display:grid;gap:3px;align-content:start}
+.A aside h3{font:700 .68rem var(--f-b);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:8px 6px 3px}
+.A .lien{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;color:var(--ink2);justify-content:space-between}
+.A .lien.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.A .lien .pt{display:inline-flex;gap:7px;align-items:center}
+.A .pt i{width:8px;height:8px;border-radius:50%;background:var(--good)} .A .pt i.w{background:var(--warn)} .A .pt i.b{background:var(--bad)}
+.A main{padding:14px;display:grid;gap:12px;align-content:start;min-width:0}
+.A .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.A .kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.A .kpi .l{font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);font-weight:700}
+.A .kpi .v{font:700 1.3rem var(--f-d);font-variant-numeric:tabular-nums}
+.A .kpi .s{font-size:.72rem;color:var(--ink2)}
+.v.g{color:var(--good)} .v.w{color:var(--warn)} .v.b{color:var(--bad)}
+.A .bloc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 12px;min-width:0}
+.A .bloc h3{font-size:.9rem;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.A .bloc h3 small{font:500 .72rem var(--f-b);color:var(--ink2)}
+.defil{overflow-x:auto}
+.gA{min-width:560px}
+.gA .r{display:grid;grid-template-columns:150px 1fr;border-top:1px solid var(--line);align-items:center}
+.gA .r:first-child{border-top:0}
+.gA .n{padding:5px 6px 5px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem}
+.gA .t{position:relative;height:28px;background:repeating-linear-gradient(to right,transparent 0,transparent calc(100%/26 - 1px),var(--line) calc(100%/26 - 1px),var(--line) calc(100%/26))}
+.gA .pl{position:absolute;top:3px;height:4px;border-radius:2px;background:var(--plan)}
+.gA .br{position:absolute;top:10px;height:12px;border-radius:4px;border:1.5px solid var(--accent);background:var(--surface2);overflow:hidden}
+.gA .br u{position:absolute;inset:0 auto 0 0;background:var(--accent)}
+.gA .br.c{border-color:var(--bad)} .gA .br.c u{background:var(--bad)}
+.gA .br.f{border-color:var(--good)} .gA .br.f u{background:var(--good)}
+.gA .auj{position:absolute;top:0;bottom:0;border-left:2px solid var(--accent);z-index:2}
+.gA .ech{position:absolute;top:0;bottom:0;border-left:2px dashed var(--bad)}
+.gA .sem{display:grid;grid-template-columns:150px 1fr;font-size:.66rem;color:var(--ink2)}
+.gA .sem div:last-child{display:grid;grid-template-columns:repeat(26,1fr);text-align:center}
+.A .deux{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:5px 6px;border-top:1px solid var(--line);font-size:.78rem}
+th{font-size:.64rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);border-top:0}
+.pill{display:inline-flex;border-radius:99px;padding:1px 8px;font-size:.68rem;font-weight:700}
+.pill.g{background:var(--good-soft);color:var(--good)} .pill.w{background:var(--warn-soft);color:var(--warn)} .pill.b{background:var(--bad-soft);color:var(--bad)} .pill.n{background:var(--surface2);color:var(--ink2);border:1px solid var(--line)}
+.A .droite{background:var(--surface);border-left:1px solid var(--line);padding:12px;display:grid;gap:12px;align-content:start;min-width:0}
+.A .droite h3{font-size:.86rem;margin-bottom:6px}
+.charge{display:grid;grid-template-columns:78px 1fr 34px;gap:6px 8px;align-items:center;font-size:.76rem}
+.jauge{height:7px;border-radius:99px;background:var(--line);overflow:hidden}.jauge i{display:block;height:100%;border-radius:99px}
+.cr{border:1px solid var(--line);border-radius:9px;padding:9px;background:var(--surface2);display:grid;gap:7px}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:4px 10px;font-weight:600;font-size:.74rem}
+.btn:hover{border-color:var(--accent)} .btn.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.matrice{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:100%;max-width:150px}
+.matrice div{aspect-ratio:1;border-radius:5px;display:grid;place-items:center;font-weight:700;font-size:.72rem;color:#fff}
+.m1{background:#3f9e6e}.m2{background:#c9962b}.m3{background:#c24a4a}
+.al{padding:7px 9px;border-radius:8px;font-size:.76rem;margin-bottom:6px}.al.w{background:var(--warn-soft)}.al.b{background:var(--bad-soft)}
+
+/* ===== B : amusante ===== */
+.B{font-family:var(--f-jb);background:linear-gradient(180deg,var(--sky1),var(--sky2));position:relative;overflow:hidden}
+.B .hud{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;padding:12px 14px;position:relative;z-index:3}
+.B .jeton{background:var(--surface);border:2.5px solid var(--cadre);border-radius:14px;padding:3px 11px 3px 8px;font:600 .98rem var(--f-j);display:inline-flex;gap:7px;align-items:center;box-shadow:0 3px 0 var(--cadre)}
+.B .jeton svg{flex:none}
+.B .hud .tit{font:700 1.2rem var(--f-j);margin-right:auto;display:flex;gap:8px;align-items:center;color:var(--cadre)}
+.B .suiv{background:var(--sun);border:2.5px solid var(--cadre);border-radius:14px;padding:6px 16px;font:700 1rem var(--f-j);box-shadow:0 4px 0 var(--cadre);color:#14202e;transition:transform .08s}
+.B .suiv:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cadre)}
+.B .jeu{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:16px;padding:6px 14px 16px;position:relative;z-index:2}
+.nuage{position:absolute;background:#fff;border-radius:99px;height:22px;opacity:.85;animation:derive 60s linear infinite}
+.nuage::before,.nuage::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.nuage::before{width:26px;height:26px;left:12px;top:-12px}.nuage::after{width:34px;height:34px;left:36px;top:-16px}
+@keyframes derive{from{transform:translateX(-120px)}to{transform:translateX(1400px)}}
+:root[data-theme="dark"] .nuage,:root:not([data-theme="light"]) .nuage{}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nuage,:root:not([data-theme="light"]) .nuage::before,:root:not([data-theme="light"]) .nuage::after{background:#44537f;opacity:.7}}
+:root[data-theme="dark"] .nuage,:root[data-theme="dark"] .nuage::before,:root[data-theme="dark"] .nuage::after{background:#44537f;opacity:.7}
+.tour{position:relative;padding-top:54px}
+.toit{position:absolute;top:0;left:3%;right:3%;height:54px;display:flex;align-items:flex-end;justify-content:center}
+.enseigne{background:var(--cadre);color:var(--surface);border-radius:10px 10px 0 0;padding:6px 18px;font:700 1rem var(--f-j);letter-spacing:.08em;position:relative}
+.enseigne::before{content:'';position:absolute;left:50%;bottom:100%;width:3px;height:22px;background:var(--cadre)}
+.enseigne::after{content:'';position:absolute;left:calc(50% + 3px);bottom:calc(100% + 10px);width:22px;height:12px;background:var(--coral);clip-path:polygon(0 0,100% 50%,0 100%)}
+.immeuble{padding-right:38px;border:3px solid var(--cadre);border-radius:6px;background:var(--cadre);display:grid;gap:3px;position:relative;margin-inline:3%;box-shadow:0 8px 0 rgba(0,0,0,.18)}
+.etage{position:relative;height:132px;overflow:hidden}
+.etage .nom{position:absolute;top:6px;left:8px;z-index:3;background:var(--surface);color:var(--ink);border:2px solid var(--cadre);border-radius:8px;font:600 .72rem var(--f-j);padding:0 8px}
+.e3{background:var(--wall3)} .e2{background:var(--wall4)} .e1{background:var(--wall2)} .e0{background:var(--wall)}
+.etage::after{content:'';position:absolute;left:0;right:0;bottom:0;height:10px;background:var(--dalle);z-index:1}
+.fenetre{position:absolute;top:26px;width:64px;height:46px;border:3px solid var(--cadre);border-radius:6px;background:var(--glass)}
+.fenetre::after{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:3px solid var(--cadre)}
+.bureau{position:absolute;bottom:10px;height:30px;background:var(--bois);border:2.5px solid var(--cadre);border-radius:6px 6px 0 0;z-index:2}
+.bureau::before{content:'';position:absolute;left:18%;bottom:100%;width:34%;height:15px;background:var(--surface);border:2.5px solid var(--cadre);border-radius:4px 4px 0 0}
+.bureau::after{content:'';position:absolute;left:24%;bottom:calc(100% + 4px);width:22%;height:6px;background:var(--accent);border-radius:2px}
+.perso{position:absolute;bottom:34px;z-index:3;width:46px;border:0;background:none;padding:0;transition:transform .15s;animation:bob 2.6s ease-in-out infinite}
+.perso:hover,.perso:focus-visible{transform:translateY(-6px) scale(1.08)}
+.perso svg{display:block;width:100%;overflow:visible}
+@keyframes bob{50%{transform:translateY(-2px)}}
+.bulle{position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-30%);white-space:nowrap;background:var(--surface);color:var(--ink);border:2px solid var(--cadre);border-radius:10px;padding:1px 8px;font:700 .68rem var(--f-jb);z-index:4}
+.bulle::after{content:'';position:absolute;left:24%;top:100%;border:5px solid transparent;border-top-color:var(--cadre)}
+.anneau{position:absolute;left:calc(100% - 8px);top:-2px}
+.table-r{position:absolute;bottom:10px;left:34%;width:32%;height:26px;background:var(--bois);border:2.5px solid var(--cadre);border-radius:30px 30px 4px 4px;z-index:2}
+.tableau{position:absolute;right:6%;top:30px;width:26%;height:56px;background:#fff;border:3px solid var(--cadre);border-radius:6px;padding:5px;display:grid;gap:4px;align-content:center}
+.tableau i{display:block;height:6px;border-radius:3px}
+.cadre-p{position:absolute;top:32px;border:3px solid var(--cadre);background:var(--surface);border-radius:4px;display:grid;place-items:center;font:700 .62rem var(--f-j);padding:2px 6px}
+.plante{position:absolute;bottom:10px;width:16px;height:30px;z-index:2}
+.plante::before{content:'';position:absolute;bottom:0;left:2px;width:12px;height:11px;background:var(--coral);border:2px solid var(--cadre);border-radius:2px 2px 5px 5px}
+.plante::after{content:'';position:absolute;bottom:10px;left:0;width:16px;height:18px;background:var(--mint);border:2px solid var(--cadre);border-radius:50% 50% 40% 40%}
+.ascenseur{position:absolute;right:0;top:0;bottom:0;width:38px;background:var(--nuit);z-index:5;border-left:3px solid var(--cadre)}
+.cabine{position:absolute;left:3px;right:3px;height:44px;background:var(--sun);border:2.5px solid var(--cadre);border-radius:5px;animation:monte 14s ease-in-out infinite;display:grid;place-items:center;font:700 .7rem var(--f-j);color:#14202e}
+@keyframes monte{0%,10%{top:calc(100% - 50px)}35%,45%{top:calc(66% - 44px)}65%,72%{top:calc(33% - 40px)}90%,100%{top:calc(100% - 50px)}}
+.rue{height:22px;background:var(--dalle);position:relative;border-radius:0 0 6px 6px;margin-inline:0}
+.camion{position:absolute;bottom:20px;right:9%;width:96px;z-index:6;animation:livre 9s ease-in-out infinite alternate}
+@keyframes livre{from{transform:translateX(-14px)}to{transform:translateX(0)}}
+.fiche{margin:12px 3% 0;background:var(--surface);border:2.5px solid var(--cadre);border-radius:14px;padding:10px 14px;box-shadow:0 4px 0 var(--cadre);display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;min-height:86px}
+.fiche b{font:700 1.05rem var(--f-j)} .fiche .meta{color:var(--ink2);font-size:.82rem}
+.fiche .barres{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mini{font-size:.72rem;font-weight:800;color:var(--ink2)}
+.mini .jauge{height:10px;border:2px solid var(--cadre);background:var(--surface2);margin-top:2px}
+.cote{display:grid;gap:14px;align-content:start;min-width:0}
+.carte{background:var(--surface);border:2.5px solid var(--cadre);border-radius:16px;padding:12px 14px;box-shadow:0 4px 0 var(--cadre);min-width:0}
+.carte h3{font:700 1.05rem var(--f-j);margin-bottom:6px;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.carte .tag{font:700 .68rem var(--f-j);background:var(--coral);color:#fff;border-radius:99px;padding:1px 9px;letter-spacing:.04em}
+.courrier p{font-size:.9rem}
+.choix{display:grid;gap:8px;margin-top:10px}
+.choix button{text-align:left;background:var(--surface2);border:2.5px solid var(--cadre);border-radius:12px;padding:7px 10px;display:grid;gap:3px;font-family:var(--f-jb);transition:transform .08s}
+.choix button:hover{transform:translateX(3px);background:var(--accent-soft)}
+.choix button b{font:700 .92rem var(--f-j)}
+.eff{display:flex;gap:5px;flex-wrap:wrap}
+.eff i{font-style:normal;font-size:.68rem;font-weight:800;border-radius:99px;padding:0 8px;border:1.5px solid var(--cadre)}
+.eff .p{background:var(--good-soft);color:var(--good)} .eff .m{background:var(--bad-soft);color:var(--bad)} .eff .z{background:var(--warn-soft);color:var(--warn)}
+.res{margin-top:8px;border:2.5px dashed var(--accent);border-radius:12px;padding:7px 10px;font-size:.84rem;background:var(--accent-soft)}
+.route svg{width:100%;height:auto;display:block}
+.route svg text{font:700 10px var(--f-j);fill:var(--ink)}
+.camion-r{transition:transform 1.1s cubic-bezier(.5,1.6,.5,1)}
+.idee{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.idee div{background:var(--surface2);border:2px solid var(--cadre);border-radius:12px;padding:7px 10px;font-size:.8rem}
+.idee b{display:block;font:700 .88rem var(--f-j)}
+.toast-b{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:var(--cadre);color:var(--surface);border-radius:12px;padding:8px 16px;font:700 .9rem var(--f-j);z-index:9;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast-b.on{opacity:1}
+.comparatif{overflow-x:auto}
+.comparatif table{min-width:560px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.comparatif th,.comparatif td{padding:9px 12px;font-size:.88rem;vertical-align:top}
+.comparatif th{text-transform:none;letter-spacing:0;font-size:.88rem;color:var(--ink);background:var(--surface2)}
+@media (max-width:980px){
+  .A{grid-template-columns:minmax(0,1fr)}
+  .A aside{border-right:0;border-bottom:1px solid var(--line);grid-auto-flow:column;overflow-x:auto;padding:8px}
+  .A aside h3{display:none}
+  .A .droite{border-left:0;border-top:1px solid var(--line)}
+  .B .jeu{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .etage{height:118px}
+  .perso{width:38px}
+  .fenetre{width:44px}
+  .tableau{display:none}
+  .fiche .barres{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="page">
+  <header class="intro">
+    <p class="etiq">Deux directions visuelles pour le même jeu</p>
+    <h1>Esquisses de Project Tycoon</h1>
+    <p>Les deux écrans partagent le même moteur de jeu (budget, équipe, risques, parties prenantes). Seule la façon de les montrer change. Clique sur les personnages, les cartes de décision et le bouton « Semaine suivante » de l’esquisse B pour sentir le rythme.</p>
+  </header>
+
+  <div class="choix-style" role="group" aria-label="Style à afficher"><span class="lib">Quel style veux-tu voir ?</span>
+    <button type="button" data-v="A" aria-pressed="false">Sérieux</button><button type="button" data-v="B" aria-pressed="false">Amusant</button><button type="button" data-v="AB" aria-pressed="true">Les deux</button></div>
+
+  <section id="sec-A" aria-labelledby="ta">
+    <div class="legende-esq"><div><p class="etiq">Esquisse A</p><h2 id="ta">Sérieuse : le poste de pilotage</h2></div>
+      <p>Pour un joueur qui veut s’entraîner comme dans un vrai bureau de projets : portefeuille, Gantt, risques, charge de l’équipe. Exemple : un projet de carrière avancée (migration infonuagique).</p></div>
+    <div class="cadre A" id="ecranA"></div>
+    <div class="notes">
+      <div class="note"><b>Information avant tout</b><span>Les chiffres viennent en premier, les alertes se repèrent par la couleur. Aucune décoration.</span></div>
+      <div class="note"><b>Décisions réalistes</b><span>Demandes de changement, registre des risques, charge de travail : les vrais outils du métier.</span></div>
+      <div class="note"><b>Public</b><span>Étudiants et profs en gestion, séances de classe, comparaison de résultats.</span></div>
+    </div>
+  </section>
+
+  <section id="sec-B" aria-labelledby="tb">
+    <div class="legende-esq"><div><p class="etiq">Esquisse B</p><h2 id="tb">Amusante : la tour du cabinet</h2></div>
+      <p>Pas une carte vue du dessus. Un immeuble en coupe où l’équipe vit, un courrier qui apporte les imprévus sous forme de cartes de décision, et le projet qui avance comme un camion sur une route.</p></div>
+    <div class="cadre B" id="ecranB"></div>
+    <div class="notes">
+      <div class="note"><b>L’équipe se voit</b><span>Fatigue, moral et surcharge se lisent sur les personnages (bulles, zzz, éclairs) avant même d’ouvrir un menu.</span></div>
+      <div class="note"><b>Les imprévus sont des moments de jeu</b><span>Chaque événement est une carte avec trois choix et des conséquences visibles, comme dans un jeu de cartes.</span></div>
+      <div class="note"><b>L’immeuble grandit</b><span>Chaque promotion ajoute un étage, une salle ou un outil : réputation, bureaux, certifications accrochées au mur.</span></div>
+    </div>
+    <div class="carte" style="margin-top:14px;border-radius:16px;font-family:var(--f-jb)">
+      <h3>Idées de moments de jeu (au-delà de la carte)</h3>
+      <div class="idee">
+        <div><b>Casse-tête des ressources</b>Glisser des personnes sur les tâches pour que tout tienne dans la semaine.</div>
+        <div><b>Réunion de crise</b>Un client fâché, trois réponses possibles, un seul bon ton.</div>
+        <div><b>Négociation du contrat</b>Cartes prix fixe, coût majoré, temps et matériel contre un fournisseur.</div>
+        <div><b>Salle de réunion</b>Le tableau blanc montre le Gantt. Cliquer sur une barre ouvre la tâche.</div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tc">
+    <h2 id="tc" style="margin-bottom:10px">Comparaison rapide</h2>
+    <div class="comparatif"><table>
+      <thead><tr><th></th><th>A · Sérieuse</th><th>B · Amusante</th></tr></thead>
+      <tbody>
+        <tr><td><b>Vue principale</b></td><td>Tableau de bord et Gantt</td><td>Immeuble en coupe avec l’équipe</td></tr>
+        <tr><td><b>Imprévus</b></td><td>Notification et demande de changement dans un panneau</td><td>Courrier : carte de décision avec conséquences</td></tr>
+        <tr><td><b>Progression</b></td><td>Barres de Gantt</td><td>Camion sur la route des livrables</td></tr>
+        <tr><td><b>Ton</b></td><td>Professionnel, dense, calme</td><td>Coloré, vivant, rapide à comprendre</td></tr>
+        <tr><td><b>Effort de développement</b></td><td>Faible : proche de la phase 1</td><td>Moyen : personnages, animations, cartes</td></tr>
+      </tbody></table></div>
+    <p style="margin-top:12px;color:var(--ink2);max-width:70ch">Ma suggestion : garder les deux dans le jeu final. Un réglage « Style d’affichage » (Pilotage ou Tour du cabinet) change la présentation sans changer les règles, donc les classements restent comparables.</p>
+  </section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>new Intl.NumberFormat('fr-CA',{style:'currency',currency:'CAD',maximumFractionDigits:0}).format(n);
+
+/* ---------- ESQUISSE A ---------- */
+(function(){
+  const taches=[['Cadrage',0,2,1,'f'],['Inventaire applicatif',2,3,1,'f'],['Architecture cible',4,3,1,'f'],['Migration lot 1 : RH',7,5,.78,'c'],['Migration lot 2 : prêts',10,6,.3,'c'],['Sécurité et conformité',8,6,.55,''],['Tests de charge',16,3,0,'c'],['Formation du personnel',17,3,0,''],['Bascule en production',20,2,0,'c']];
+  const sem=Array.from({length:26},(_,i)=>`<span>${(i+1)%2?i+1:''}</span>`).join('');
+  const rows=taches.map(([n,es,d,p,c])=>`<div class="r"><div class="n" title="${esc(n)}">${esc(n)}</div><div class="t">
+    <i class="pl" style="left:${es/26*100}%;width:${d/26*100}%"></i>
+    <i class="br ${c}" style="left:${(es+(c==='c'&&p<1?0.8:0))/26*100}%;width:${d/26*100}%"><u style="width:${p*100}%"></u></i><i class="auj" style="left:${12.5/26*100}%"></i><i class="ech" style="left:${24/26*100}%"></i></div></div>`).join('');
+  const charge=[['Camille P.',85,'g'],['Mathis B.',118,'b'],['Zoé L.',72,'g'],['Samir H.',96,'w'],['Inès G.',60,'g']].map(([n,v,c])=>`<span>${n}</span><div class="jauge"><i style="width:${Math.min(100,v)}%;background:var(--${c==='g'?'good':c==='w'?'warn':'bad'})"></i></div><span class="num">${v} %</span>`).join('');
+  $('#ecranA').innerHTML=`
+  <div class="barre"><span class="logo">PT</span><span class="chemin">Portefeuille › <b>Migration infonuagique · Banque Laurentide</b></span><span class="recherche">Rechercher…</span><span class="moi"><span class="pastille">AL</span><span><b>Alex</b> · Gestionnaire senior</span></span></div>
+  <aside>
+    <h3>Portefeuille</h3>
+    <span class="lien on"><span class="pt"><i class="w"></i>Migration infonuagique</span><span class="num">0,94</span></span>
+    <span class="lien"><span class="pt"><i></i>Gala annuel</span><span class="num">1,06</span></span>
+    <span class="lien"><span class="pt"><i class="b"></i>Datacenter Beauce</span><span class="num">0,81</span></span>
+    <h3>Projet</h3>
+    <span class="lien">Aperçu</span><span class="lien">Planification</span><span class="lien">Risques</span><span class="lien">Équipe</span><span class="lien">Budget</span><span class="lien">Parties prenantes</span><span class="lien">Rapports</span>
+  </aside>
+  <main>
+    <div class="kpis">
+      <div class="kpi"><div class="l">Avancement</div><div class="v">47 %</div><div class="s">semaine 12 sur 24</div></div>
+      <div class="kpi"><div class="l">CPI</div><div class="v w">0,94</div><div class="s">coûts légèrement élevés</div></div>
+      <div class="kpi"><div class="l">SPI</div><div class="v g">1,02</div><div class="s">dans les temps</div></div>
+      <div class="kpi"><div class="l">Dépensé</div><div class="v">${fmt(412000)}</div><div class="s">sur ${fmt(520000)}</div></div>
+      <div class="kpi"><div class="l">Risques ouverts</div><div class="v b">2 <span style="font-size:.8rem;color:var(--ink2);font-weight:500">sur 7</span></div><div class="s">élevés</div></div>
+    </div>
+    <div class="bloc"><h3>Diagramme de Gantt <small>chemin critique en rouge · ligne bleue : aujourd’hui</small></h3>
+      <div class="defil"><div class="gA"><div class="sem"><div></div><div>${sem}</div></div>${rows}</div></div>
+    </div>
+    <div class="deux">
+      <div class="bloc"><h3>Registre des risques <small>probabilité × impact</small></h3>
+        <table><thead><tr><th>Risque</th><th>Score</th><th>Réponse</th></tr></thead><tbody>
+          <tr><td>Retard du fournisseur infonuagique</td><td><span class="pill b">12</span></td><td>Atténuer</td></tr>
+          <tr><td>Départ d’un architecte clé</td><td><span class="pill b">9</span></td><td>Transférer</td></tr>
+          <tr><td>Hausse du prix des licences</td><td><span class="pill w">6</span></td><td>Accepter</td></tr></tbody></table></div>
+      <div class="bloc"><h3>Matrice de criticité</h3><div style="display:flex;gap:12px;align-items:center"><div class="matrice"><div class="m2">·</div><div class="m3">2</div><div class="m3">1</div><div class="m1">·</div><div class="m2">3</div><div class="m3">1</div><div class="m1">1</div><div class="m1">·</div><div class="m2">1</div></div><p style="color:var(--ink2);font-size:.76rem">Lignes : probabilité. Colonnes : impact. Les chiffres comptent les risques par case.</p></div></div>
+    </div>
+  </main>
+  <div class="droite">
+    <div><h3>Demande de changement</h3>
+      <div class="cr" id="cr"><div><b>Ajouter un tableau de bord de suivi</b><div style="color:var(--ink2);font-size:.76rem;margin-top:2px">Client : Banque Laurentide · +3 semaines, +38 000 $</div></div>
+      <div class="btns"><button class="btn p" data-r="accepté : budget et échéancier mis à jour">Accepter</button><button class="btn" data-r="en négociation : contre-offre à +2 semaines">Négocier</button><button class="btn" data-r="refusé : satisfaction du client −4">Refuser</button></div></div></div>
+    <div><h3>Charge de l’équipe</h3><div class="charge">${charge}</div></div>
+    <div><h3>Alertes</h3><div class="al b">Mathis B. est à 118 % de charge depuis 3 semaines.</div><div class="al w">Le CPI est sous 0,95 : revoir les coûts des lots de migration.</div></div>
+  </div>`;
+  $('#cr').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;
+    $('#cr').innerHTML=`<div><b>Décision enregistrée</b><div style="color:var(--ink2);font-size:.78rem;margin-top:3px">Demande ${esc(b.dataset.r)}.</div></div>`;});
+})();
+
+/* ---------- ESQUISSE B ---------- */
+(function(){
+  const peau=['#f2c9a0','#c98f62','#8d5a3b','#f5d6b8'];
+  function perso({p,c,h,m,z,e}){ // p peau, c cheveux, h haut, m humeur
+    const bouche=m==='joyeux'?'<path d="M-4 2 Q0 7 4 2" stroke="#14202e" stroke-width="1.6" fill="none" stroke-linecap="round"/>':
+                 m==='fatigue'?'<path d="M-3.5 4 H3.5" stroke="#14202e" stroke-width="1.6" stroke-linecap="round"/>':
+                 '<path d="M-3 3 Q0 5 3 3" stroke="#14202e" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+    const yeux=m==='fatigue'?'<path d="M-6 -3 h3 M3 -3 h3" stroke="#14202e" stroke-width="1.6" stroke-linecap="round"/>':'<circle cx="-4" cy="-3" r="1.5" fill="#14202e"/><circle cx="4" cy="-3" r="1.5" fill="#14202e"/>';
+    return `<svg viewBox="-24 -4 48 66" aria-hidden="true"><rect x="-13" y="26" width="26" height="30" rx="9" fill="${h}" stroke="var(--cadre)" stroke-width="2.5"/>
+      <circle cx="0" cy="12" r="13" fill="${p}" stroke="var(--cadre)" stroke-width="2.5"/>
+      <path d="M-13 10 Q-12 -4 0 -3 Q12 -4 13 10 Q6 3 -13 10Z" fill="${c}" stroke="var(--cadre)" stroke-width="2.5" stroke-linejoin="round"/>
+      <g transform="translate(0 15)">${yeux}${bouche}</g>${e?'<path d="M16 22 l-5 9 h5 l-4 9" stroke="var(--cadre)" stroke-width="2" fill="#ffc83d" stroke-linejoin="round"/>':''}</svg>`;
+  }
+  function anneau(pct,col){const r=11,c=2*Math.PI*r;return `<svg class="anneau" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="${r}" fill="var(--surface)" stroke="var(--line)" stroke-width="5"/><circle cx="15" cy="15" r="${r}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${c*pct} ${c}" transform="rotate(-90 15 15)"/><text x="15" y="18.5" text-anchor="middle" font-size="8.5" font-weight="800" fill="var(--ink)" font-family="Nunito,sans-serif">${Math.round(pct*100)}</text></svg>`;}
+  const equipe={
+    camille:{nom:'Camille Pelletier',role:'Analyste d’affaires',tache:'T7 Photos et contenu',moral:78,fat:30,vit:62,humeur:'Solide. Aime les échéances claires.'},
+    mathis:{nom:'Mathis Bouchard',role:'Développeur back-end',tache:'T5 Paiement sécurisé',moral:46,fat:86,vit:64,humeur:'Épuisé : 3 semaines d’heures supplémentaires.'},
+    zoe:{nom:'Zoé Lefebvre',role:'Designer UX',tache:'T4 Catalogue',moral:84,fat:22,vit:48,humeur:'Inspirée. Propose une amélioration du parcours.'},
+    samir:{nom:'Samir Haddad',role:'Développeur front-end',tache:'T4 Catalogue',moral:70,fat:48,vit:48,humeur:'Concentré. Attend les maquettes finales.'}
+  };
+  const star=`<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.8 5.6 21.5l1.7-7.2L2 9.6 9 9z" fill="var(--sun)" stroke="var(--cadre)" stroke-width="2" stroke-linejoin="round"/></svg>`;
+  const piece=`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--sun)" stroke="var(--cadre)" stroke-width="2.4"/><text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="800" fill="#14202e" font-family="Fredoka,sans-serif">$</text></svg>`;
+  const cal=`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" fill="var(--surface)" stroke="var(--cadre)" stroke-width="2.4"/><path d="M3 10h18M8 3v4M16 3v4" stroke="var(--cadre)" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+  function bureauPerso(id,left,w,p,c,h,m,eclair,zz){
+    const q=equipe[id];const col=q.fat>70?'var(--coral)':q.fat>45?'var(--sun)':'var(--mint)';
+    return `<div class="bureau" style="left:${left}%;width:${w}%"></div>
+      <button class="perso" style="left:calc(${left}% + ${w/2}% - 23px);animation-delay:${(left%7)/5}s" data-p="${id}" aria-label="${esc(q.nom)} : voir la fiche">${anneau(q.vit/100,col)}${zz?`<span class="bulle">zzz… café ?</span>`:''}${perso({p,c,h,m,e:eclair})}</button>`;
+  }
+  const etage3=`<div class="etage e3"><span class="nom">Direction</span>
+    <div class="fenetre" style="left:8%"></div><div class="fenetre" style="left:20%"></div>
+    <div class="cadre-p" style="left:36%;gap:4px;grid-auto-flow:column">${star}${star}${star}</div>
+    <div class="cadre-p" style="left:52%">PMP · CAPM</div>
+    <div class="bureau" style="left:62%;width:20%"></div><div class="plante" style="left:86%"></div>
+    <div class="perso" style="left:calc(72% - 23px);animation-delay:.4s">${perso({p:peau[3],c:'#6b6b73',h:'#2f3a5a',m:'neutre'})}<span class="bulle" style="transform:translateX(-45%)">Budget ?</span></div></div>`;
+  const etage2=`<div class="etage e2"><span class="nom">Salle de réunion</span>
+    <div class="tableau"><i style="width:30%;background:var(--accent)"></i><i style="width:55%;margin-left:25%;background:var(--coral)"></i><i style="width:45%;margin-left:55%;background:var(--coral)"></i><i style="width:25%;margin-left:70%;background:var(--accent)"></i></div>
+    <div class="table-r"></div>
+    <div class="perso" style="left:calc(38% - 23px)">${perso({p:peau[1],c:'#2b2118',h:'#38bdf8',m:'joyeux'})}</div>
+    <div class="perso" style="left:calc(52% - 23px);animation-delay:.6s">${perso({p:peau[0],c:'#c9772b',h:'#ff6b5e',m:'neutre'})}<span class="bulle" style="transform:translateX(-30%)">Client : « Et si on ajoutait… »</span></div>
+    <div class="perso" style="left:calc(66% - 23px);animation-delay:1.2s">${perso({p:peau[2],c:'#14202e',h:'#a78bfa',m:'joyeux'})}</div></div>`;
+  const etage1=`<div class="etage e1"><span class="nom">Atelier de l’équipe</span>
+    <div class="fenetre" style="left:2%"></div>
+    ${bureauPerso('camille',9,17,peau[0],'#7a3b1e','#38bdf8','joyeux',false,false)}
+    ${bureauPerso('mathis',31,17,peau[2],'#14202e','#ff6b5e','fatigue',true,true)}
+    ${bureauPerso('zoe',53,17,peau[1],'#a83279','#a78bfa','joyeux',false,false)}
+    ${bureauPerso('samir',75,16,peau[3],'#3b2a1a','#38c28a','neutre',false,false)}</div>`;
+  const etage0=`<div class="etage e0"><span class="nom">Accueil</span>
+    <div class="fenetre" style="left:6%"></div>
+    <div class="cadre-p" style="left:24%;top:36px">Courrier : 1 nouveau</div>
+    <div class="plante" style="left:8%"></div>
+    <div class="bureau" style="left:56%;width:18%"></div>
+    <div class="perso" style="left:calc(65% - 23px)">${perso({p:peau[0],c:'#14202e',h:'#14202e',m:'joyeux'})}<span class="bulle" style="transform:translateX(-50%)">Bonjour !</span></div></div>`;
+  const camion=`<svg class="camion" viewBox="0 0 96 52" aria-hidden="true"><rect x="2" y="8" width="56" height="30" rx="4" fill="var(--surface)" stroke="var(--cadre)" stroke-width="2.5"/><path d="M58 16h20l12 12v10H58z" fill="var(--coral)" stroke="var(--cadre)" stroke-width="2.5" stroke-linejoin="round"/><rect x="66" y="19" width="12" height="9" rx="2" fill="var(--glass)" stroke="var(--cadre)" stroke-width="2"/><circle cx="20" cy="40" r="7" fill="#14202e"/><circle cx="74" cy="40" r="7" fill="#14202e"/><text x="30" y="28" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="11" fill="var(--ink)">LIVRAISON</text></svg>`;
+
+  const flags=['T1','T2','T3','T4','T5','T6','T7','T8','T9'];
+  const route=`<svg viewBox="0 0 640 112" role="img" aria-label="Route du projet avec neuf jalons et un camion au jalon cinq">
+    <rect x="8" y="58" width="624" height="30" rx="15" fill="var(--dalle)" stroke="var(--cadre)" stroke-width="2.5"/>
+    <path d="M26 73H614" stroke="#fff" stroke-width="3" stroke-dasharray="14 12" opacity=".8"/>
+    ${flags.map((f,i)=>{const x=50+i*69;const fait=i<4;return `<g><path d="M${x} 58V28" stroke="var(--cadre)" stroke-width="2.5"/><path d="M${x} 28h22l-5 7 5 7H${x}z" fill="${fait?'var(--mint)':'var(--surface)'}" stroke="var(--cadre)" stroke-width="2.2" stroke-linejoin="round"/><text x="${x+2}" y="20">${f}</text></g>`}).join('')}
+    <g transform="translate(404 40)"><path d="M0 18L10 0 20 18z" fill="var(--sun)" stroke="var(--cadre)" stroke-width="2.4" stroke-linejoin="round"/><text x="10" y="15" text-anchor="middle" font-size="12">!</text></g>
+    <text x="414" y="106" text-anchor="middle" font-size="9.5">Risque : retard fournisseur</text>
+    <g id="camion-r" class="camion-r" transform="translate(222 38)"><rect x="0" y="4" width="26" height="16" rx="3" fill="var(--surface)" stroke="var(--cadre)" stroke-width="2.2"/><path d="M26 8h9l6 6v6H26z" fill="var(--coral)" stroke="var(--cadre)" stroke-width="2.2" stroke-linejoin="round"/><circle cx="9" cy="22" r="4.5" fill="#14202e"/><circle cx="34" cy="22" r="4.5" fill="#14202e"/></g>
+  </svg>`;
+
+  $('#ecranB').innerHTML=`
+    <span class="nuage" style="top:70px;left:0;width:72px"></span><span class="nuage" style="top:150px;left:0;width:54px;animation-delay:-28s"></span>
+    <div class="hud"><span class="tit">Cabinet Boréal Projets</span>
+      <span class="jeton">${piece}<span class="num" id="b-argent">${fmt(142300)}</span></span>
+      <span class="jeton">${star}<span>Réputation 184</span></span>
+      <span class="jeton">${cal}<span class="num" id="b-sem">Semaine 7 sur 22</span></span>
+      <button class="suiv" id="b-suiv">Semaine suivante ▶</button></div>
+    <div class="jeu">
+      <div>
+        <div class="tour"><div class="toit"><div class="enseigne">BORÉAL</div></div>
+          <div class="immeuble">${etage3}${etage2}${etage1}${etage0}
+            <div class="ascenseur" aria-hidden="true"><div class="cabine">↕</div></div></div>
+          <div class="rue">${camion}</div></div>
+        <div class="fiche" id="fiche" aria-live="polite"></div>
+      </div>
+      <div class="cote">
+        <div class="carte courrier"><h3>Courrier du jour <span class="tag">NOUVEAU</span></h3>
+          <p><b>Le client veut un module d’infolettre.</b> Il dit que « ce sera rapide ». Ton équipe, elle, est déjà tendue.</p>
+          <div class="choix" id="b-choix">
+            <button data-r="Tu as accepté. Budget et échéancier ajustés, le client est ravi. Mathis soupire : fatigue en hausse." data-a="accepte"><b>Accepter tel quel</b><span class="eff"><i class="m">−24 000 $</i><i class="m">+2 sem.</i><i class="p">Client +8</i><i class="m">Moral −6</i></span></button>
+            <button data-r="Belle négociation ! L’infolettre passe en deuxième phase, avec un petit budget. Tout le monde respire." data-a="negocie"><b>Négocier une phase 2</b><span class="eff"><i class="z">+6 000 $</i><i class="p">Client +2</i><i class="p">Moral +2</i></span></button>
+            <button data-r="Refusé poliment. Le client est déçu, mais le projet reste sur ses rails." data-a="refuse"><b>Refuser</b><span class="eff"><i class="m">Client −5</i><i class="p">Budget intact</i></span></button>
+          </div><div id="b-res"></div></div>
+        <div class="carte route"><h3>Route du projet <span class="num" style="font:600 .8rem var(--f-jb);color:var(--ink2)">5 livrables sur 9</span></h3>${route}</div>
+      </div>
+    </div>
+    <div class="toast-b" id="b-toast" role="status"></div>`;
+
+  function fiche(id){const q=equipe[id];
+    $('#fiche').innerHTML=`<div><b>${esc(q.nom)}</b><div class="meta">${esc(q.role)} · ${esc(q.tache)}</div></div><div class="meta">${esc(q.humeur)}</div>
+      <div class="barres"><div class="mini">Moral<div class="jauge"><i style="width:${q.moral}%;background:var(--mint)"></i></div></div><div class="mini">Fatigue<div class="jauge"><i style="width:${q.fat}%;background:${q.fat>70?'var(--coral)':'var(--sun)'}"></i></div></div><div class="mini">Avancement de la tâche<div class="jauge"><i style="width:${q.vit}%;background:var(--accent)"></i></div></div></div>`;}
+  fiche('mathis');
+  $('#ecranB').addEventListener('click',e=>{const p=e.target.closest('[data-p]');if(p)fiche(p.dataset.p);});
+  $('#b-choix').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;
+    $('#b-res').innerHTML=`<div class="res"><b>Résultat :</b> ${esc(b.dataset.r)}</div>`;});
+  let sem=7,argent=142300,x=222;
+  const toast=t=>{const e=$('#b-toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200);};
+  $('#b-suiv').addEventListener('click',()=>{
+    if(sem>=21){toast('Fin de l’esquisse : la partie réelle continuerait jusqu’au bilan !');return;}
+    sem++;argent+=4200;x=Math.min(560,x+26);
+    $('#b-sem').textContent='Semaine '+sem+' sur 22';$('#b-argent').textContent=fmt(argent);
+    $('#camion-r').setAttribute('transform','translate('+x+' 38)');
+    toast(sem===12?'Alerte : fournisseur en retard de 2 jours !':'Semaine '+sem+' : +4 200 $ de facturation');
+  });
+})();
+
+/* ---------- choix du style ---------- */
+(function(){
+  const btns=[...document.querySelectorAll('.choix-style button')];
+  function voir(v,sauve){
+    $('#sec-A').hidden=!v.includes('A');$('#sec-B').hidden=!v.includes('B');
+    btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v)));
+    if(sauve){try{localStorage.setItem('pt-esquisse-style',v);}catch(e){}}
+  }
+  let v='AB';
+  try{const m=localStorage.getItem('pt-esquisse-style');if(['A','B','AB'].includes(m))v=m;}catch(e){}
+  const h=(location.hash||'').replace('#','').toLowerCase();
+  if(h==='serieux')v='A';else if(h==='amusant')v='B';
+  voir(v,false);
+  btns.forEach(b=>b.addEventListener('click',()=>voir(b.dataset.v,true)));
+})();
+</script>
+
+</body>
+</html>
